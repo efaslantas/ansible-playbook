@@ -1,0 +1,21 @@
+- hosts: host
+  gather_facts: false
+
+  tasks:
+
+  - name: netstat
+    shell: /bin/netstat -tln |  grep ":{{ item }} " | sed -e 's/.*\///'
+    register:
+      netstat_result
+    with_items:
+      - 5432
+      - 34044
+      - 80
+    changed_when: false
+
+
+  - name: print result
+    debug:
+      msg: "for port: {{ item.item }}, netstat stdout was: {{ item.stdout }}"
+    with_items:
+    - "{{ netstat_result.results }}"
